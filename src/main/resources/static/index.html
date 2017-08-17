@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Spring Boot and OAuth2 with AAD for Java</title>
+	<link rel="stylesheet" type="text/css"
+		  href="/webjars/bootstrap/3.2.0/css/bootstrap.min.css"/>
+	<script type="text/javascript" src="/webjars/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript"
+			src="/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="app" ng-controller="home">
+<div class="container">
+	<h1>Azure Active Directory Sample for Java</h1>
+	<div class="row">
+		<div class="col-md-12">
+			<form>
+				<input ng-hide="authenticated" type="button" class="btn btn-primary" onClick="location.href='/login'"
+					   value="Login"/>
+				<div class="container" ng-show="authenticated">
+					Logged in as: <span ng-bind="user"></span>
+					<div>
+						<button onclick="location.href='/logout'" class="btn btn-primary">Logout</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" ng-show="authenticated">
+			<h2>Principal</h2>
+			<table class="table table-bordered">
+				<thead>
+				<tr>
+					<th>name</th>
+					<th>value</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="(k,v) in detail">
+					<td>{{k}}</td>
+					<td>{{v}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="/webjars/angularjs/1.4.3/angular.min.js"></script>
+<script>
+	angular.module("app", []).controller("home", function ($http, $scope) {
+		var self = $scope;
+		$http.get("/user").then(
+			function (response) {
+				var detail = response.data.userAuthentication.details;
+				self.detail = detail;
+				self.user = detail.displayName;
+				self.authenticated = true;
+			},
+			function () {
+				self.user = "N/A";
+				self.authenticated = false;
+			});
+
+	});
+</script>
+</body>
+</html>
